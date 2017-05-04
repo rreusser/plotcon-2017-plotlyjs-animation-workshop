@@ -1,35 +1,64 @@
-var frame1 = {
-  name: 'frame1',
-  data: [{
-    y: [3, 4, 2]
-  }]
-};
+function iotaArray(n) {
+  var result = new Array(n)
+  for(var i=0; i<n; ++i) {
+    result[i] = i
+  }
+  return result
+}
 
-var frame2 = {
-  name: 'frame2',
-  data: [{
-    y: [4, 2, 3]
-  }]
-};
+var ntraces = 10;
+var traces = [];
+var npts = 200;
+for (j = 0; j < ntraces; j++) {
+  var x = [0];
+  var y = [0];
+  for (var i = 1; i < npts; i++) {
+    x[i] = x[i - 1] + Math.random() - 0.5
+    y[i] = y[i - 1] + Math.random() - 0.5
+  }
+  traces.push({
+    x: x,
+    y: y,
+    showlegend: false,
+    opacity: 0.5,
+    line: {simplify: false},
+    mode: 'lines',
+    transforms: [{
+      type: 'filter',
+      target: iotaArray(npts),
+      operation: '<',
+      value: 1
+    }]
+  })
+}
 
-Plotly.plot('graph', {
-  data: [{
-    x: [1, 2, 3],
-    y: [2, 4, 3],
-    line: {simplify: false}
-  }],
-  frames: [frame1, frame2]
-}).then(function () {
-  return Plotly.animate('graph',
-    ['frame1', 'frame2'],
-    {
-      transition: {
-        duration: 1000
-      },
-      frame: {
-        duration: 2000,
-        redraw: false
-      }
-    }
-  );
+Plotly.plot('graph', traces, {
+  xaxis: {
+    scaleratio: 1,
+    scaleanchor: 'y',
+    range: [-6, 6]
+  },
+  yaxis: {
+    range: [-6, 6]
+  },
+  width: window.innerWidth - 30,
+  height: window.innerWidth - 30,
+  sliders: [{
+    steps: iotaArray(npts).map((i) => ({
+      label: i,
+      method: 'animate',
+      args: [[{
+        data: iotaArray(ntraces).map(() => ({
+          'transforms[0].value': i
+        })),
+        traces: iotaArray(ntraces)
+      }], {
+        transition: {duration: 0},
+        frame: {duration: 0, redraw: false},
+        mode: 'immediate'
+      }]
+    }))
+  }]
+}, {
+  scrollZoom: true
 });

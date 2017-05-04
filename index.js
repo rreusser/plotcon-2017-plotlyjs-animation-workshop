@@ -12,7 +12,8 @@ function Pen (root, slideNumber) {
 
   var htmlEditor = CodeMirror.fromTextArea(htmlTextarea, {
     lineNumbers: true,
-    mode: 'html',
+    mode: 'xml',
+    htmlMode: true,
     theme: 'neo'
   });
 
@@ -33,11 +34,17 @@ function Pen (root, slideNumber) {
 
   var frame = iframe({container: outputDiv});
 
+  var jsBtn = root.querySelector('.pen-editJs');
+  var htmlBtn = root.querySelector('.pen-editHtml');
+
   this.editJs = function () {
     jsContainer.style.opacity = 1;
     htmlContainer.style.opacity = 0;
     jsContainer.style.pointerEvents = 'all';
     htmlContainer.style.pointerEvents = 'none';
+
+    jsBtn.classList.add('is-active');
+    htmlBtn.classList.remove('is-active');
   };
 
   this.editHtml = function () {
@@ -45,6 +52,9 @@ function Pen (root, slideNumber) {
     htmlContainer.style.opacity = 1;
     jsContainer.style.pointerEvents = 'none';
     htmlContainer.style.pointerEvents = 'all';
+
+    jsBtn.classList.remove('is-active');
+    htmlBtn.classList.add('is-active');
   };
 
   this.codepen = function () {

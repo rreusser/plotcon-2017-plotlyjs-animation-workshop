@@ -120,6 +120,7 @@ body {
 
 .pen-controls--tabs {
   left: 0;
+  border-right: 1px solid #888;
 }
 
 .pen-controls--actions {
@@ -127,25 +128,38 @@ body {
 }
 
 .pen-controls button {
+  background-color: #eee;
+  color: #333;
   min-width: 70px;
   height: 40px;
-  background-color: #009bff;
   border: none;
   outline: none;
   border-radius: 0;
-  color: white;
   font-size: 11px;
   text-transform: uppercase;
   padding: 0 15px;
   cursor: pointer;
   float:left;
 }
+.pen-controls button:not(:last-child) {
+  border-right: 1px solid #ddd;
+}
+
+.pen-controls--tabs button.is-active {
+  background-color: #009bff;
+  color: white;
+}
+
 .pen-controls button:hover {
-  background-color: #22abff;
+  background-color: #f8f8f8;
 }
 .pen-controls button:active {
-  background-color: #008bee;
+  background-color: #ddd;
 }
-.pen-controls button:not(:last-child) {
-  border-right: 1px solid #55ccff;
+
+.pen-controls button.is-active:hover {
+  background-color: #22abff;
+}
+.pen-controls button.is-active:active {
+  background-color: #008bee;
 }

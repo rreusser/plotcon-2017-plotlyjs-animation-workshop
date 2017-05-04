@@ -1,5 +1,13 @@
 @import url(fonts/source-sans-pro/source-sans-pro.css);
 
+.github-corner {
+  display: none !important;
+}
+
+body[data-slide-number='0'] .github-corner {
+  display: block !important;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -95,22 +103,31 @@ body {
 .pen .CodeMirror {
   position: absolute;
   width: 50%;
-  top: 0;
+  top: 40px;
   bottom:0;
   left: 0;
   height: auto;
   border-right: 1px solid #888;
 }
 
-.pen .pen-controls {
+.pen-controls {
   position: absolute;
   width: 50%;
   top: 0;
   height: 40px;
+  border-bottom: 1px solid #888;
+}
+
+.pen-controls--tabs {
+  left: 0;
+}
+
+.pen-controls--actions {
   right: 0;
 }
 
 .pen-controls button {
+  min-width: 70px;
   height: 40px;
   background-color: #009bff;
   border: none;

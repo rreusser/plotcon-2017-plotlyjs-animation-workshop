@@ -1,15 +1,29 @@
 var iframe = require('iframe');
 
 function Pen (root, slideNumber) {
-  var ta = root.querySelector('textarea');
+  var jsTextarea = root.querySelector('.pen-js');
+  var htmlTextarea = root.querySelector('.pen-html');
 
-  var cm = CodeMirror.fromTextArea(ta, {
+  var jsEditor = CodeMirror.fromTextArea(jsTextarea, {
     lineNumbers: true,
     mode: 'javascript',
     theme: 'neo'
   });
 
-  cm.display.wrapper.addEventListener('keyup', function (e) {
+  var htmlEditor = CodeMirror.fromTextArea(htmlTextarea, {
+    lineNumbers: true,
+    mode: 'html',
+    theme: 'neo'
+  });
+
+  var jsContainer = root.querySelector('.pen-jsContainer');
+  var htmlContainer = root.querySelector('.pen-htmlContainer');
+
+  jsEditor.display.wrapper.addEventListener('keyup', function (e) {
+    e.stopPropagation();
+  });
+
+  htmlEditor.display.wrapper.addEventListener('keyup', function (e) {
     e.stopPropagation();
   });
 
@@ -17,9 +31,21 @@ function Pen (root, slideNumber) {
   outputDiv.classList.add('pen-output');
   root.appendChild(outputDiv);
 
-  var frame = iframe({
-    container: outputDiv,
-  });
+  var frame = iframe({container: outputDiv});
+
+  this.editJs = function () {
+    jsContainer.style.opacity = 1;
+    htmlContainer.style.opacity = 0;
+    jsContainer.style.pointerEvents = 'all';
+    htmlContainer.style.pointerEvents = 'none';
+  };
+
+  this.editHtml = function () {
+    jsContainer.style.opacity = 0;
+    htmlContainer.style.opacity = 1;
+    jsContainer.style.pointerEvents = 'none';
+    htmlContainer.style.pointerEvents = 'all';
+  };
 
   this.codepen = function () {
     var form = document.createElement('form');
@@ -32,9 +58,11 @@ function Pen (root, slideNumber) {
     data.type = 'hidden';
     data.setAttribute('value', JSON.stringify({
       js_external: "https://cdn.plot.ly/plotly-latest.min.js",
+      editors: "001",
       title: 'Plotly.js Master Class - Slide #' + slideNumber,
-      html: '<div id="graph"/>',
-      js: cm.getValue()
+      description: 'Plotly.js Master Class - Slide #' + slideNumber,
+      html: htmlEditor.getValue(),
+      js: jsEditor.getValue()
     }));
 
     var submit = document.createElement('button');
@@ -55,16 +83,17 @@ function Pen (root, slideNumber) {
     frame.setHTML({
       head: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
       body: `
-        <div id="graph"/>
-        <script type="text/javascript">${cm.getValue()}</script>
+        ${htmlEditor.getValue()}
+        <script type="text/javascript">${jsEditor.getValue()}</script>
       `
     });
   };
 
   this.refresh();
+  this.editJs();
 
   this.destroy = function () {
-    cm.toTextArea();
+    jsEditor.toTextArea();
     root.removeChild(outputDiv);
   }
 }
@@ -113,6 +142,12 @@ var slideshow = window.slideshow = {
       if (ev.target && ev.target.classList.contains('pen-codepen')) {
         this.pen && this.pen.codepen();
       }
+      if (ev.target && ev.target.classList.contains('pen-editHtml')) {
+        this.pen && this.pen.editHtml();
+      }
+      if (ev.target && ev.target.classList.contains('pen-editJs')) {
+        this.pen && this.pen.editJs();
+      }
     }.bind(this));
 
     document.addEventListener('keyup', function (ev) {
@@ -128,6 +163,8 @@ var slideshow = window.slideshow = {
   },
   setSlide: function (i) {
     this.active = i;
+
+    document.body.setAttribute('data-slide-number', i);
 
     window.location.hash = '' + (i + 1);
     var prevActive = this.activeSlide;

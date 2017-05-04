@@ -20,10 +20,14 @@
     "codemirror": "^5.25.2",
     "es2040": "^1.2.5",
     "html-entities": "^1.2.1",
+    "html-inject-github-corner": "^2.0.0",
     "hyperstream": "^1.2.2",
     "iframe": "^1.0.0",
     "markdown-it": "^8.3.1",
     "marked": "^0.3.6",
     "string-to-stream": "^1.1.0"
+  },
+  "github-corner": {
+    "url": "rickyreusser.com/plotcon-2017-plotlyjs-animation-workshop/"
   }
 }

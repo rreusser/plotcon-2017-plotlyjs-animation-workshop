@@ -13,7 +13,9 @@
 </svg>
 </a>
     <div id="slideshow"><section class="slide slide--markdown"><h1>Animation in plotly.js</h1>
-<p>Ricky Reusser</p>
+<p>Ricky Reusser<br>
+<small>Plotcon</small><br>
+<small>May 4, 2017</small></p>
 </section>
 <section class="slide slide--markdown"><h3>Why plotly.js?</h3>
 <p>Serializable!</p>
@@ -23,24 +25,19 @@
           <div class="pen-jsContainer">
             <textarea class="pen-js">Plotly.plot(&apos;graph&apos;, [{
   x: [1, 2, 3],
-  y: [2, 3, 4],
+  y: [2, 4, 3],
   line: {simplify: false}
-}]);
-
-document.getElementById(&apos;play&apos;).addEventListener(&apos;click&apos;, function () {
+}]).then(function () {
   Plotly.animate(&apos;graph&apos;, [{
     data: [{
       y: [3, 4, 2]
-    }],
-    traces: [0]
+    }]
   }]);
-})
+});
 </textarea>
           </div>
           <div class="pen-htmlContainer">
-            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;
-&lt;button id=&quot;play&quot;&gt;Play&lt;/button&gt;
-</textarea>
+            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;</textarea>
           </div>
           <div class="pen-controls pen-controls--actions">
             <button class="pen-refresh">Refresh</button>
@@ -55,7 +52,156 @@ document.getElementById(&apos;play&apos;).addEventListener(&apos;click&apos;, fu
 <section class="slide slide--code">
         <div class="pen">
           <div class="pen-jsContainer">
-            <textarea class="pen-js">console.log(&apos;hello&apos;);
+            <textarea class="pen-js">Plotly.plot(&apos;graph&apos;, [{
+  x: [1, 2, 3],
+  y: [2, 4, 3],
+  line: {simplify: false}
+}]).then(function () {
+  return Plotly.animate(&apos;graph&apos;, [{
+    data: [{
+      y: [3, 4, 2]
+    }]
+  }, {
+    data: [{
+      y: [4, 2, 3]
+    }]
+  }]);
+});
+</textarea>
+          </div>
+          <div class="pen-htmlContainer">
+            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;</textarea>
+          </div>
+          <div class="pen-controls pen-controls--actions">
+            <button class="pen-refresh">Refresh</button>
+            <button class="pen-codepen">Edit on CodePen</button>
+          </div>
+          <div class="pen-controls pen-controls--tabs">
+            <button class="pen-editJs">JS</button>
+            <button class="pen-editHtml">HTML</button>
+          </div>
+        </div>
+      </section>
+<section class="slide slide--code">
+        <div class="pen">
+          <div class="pen-jsContainer">
+            <textarea class="pen-js">var frame1 = {
+  name: &apos;frame1&apos;,
+  data: [{
+    y: [3, 4, 2]
+  }]
+};
+
+var frame2 = {
+  name: &apos;frame2&apos;,
+  data: [{
+    y: [4, 2, 3]
+  }]
+};
+
+Plotly.plot(&apos;graph&apos;, {
+  data: [{
+    x: [1, 2, 3],
+    y: [2, 4, 3],
+    line: {simplify: false}
+  }],
+  frames: [frame1, frame2]
+}).then(function () {
+  return Plotly.animate(&apos;graph&apos;,
+    [&apos;frame1&apos;, &apos;frame2&apos;],
+    {
+      transition: {
+        duration: 1000
+      },
+      frame: {
+        duration: 2000,
+        redraw: false
+      }
+    }
+  );
+});
+</textarea>
+          </div>
+          <div class="pen-htmlContainer">
+            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;</textarea>
+          </div>
+          <div class="pen-controls pen-controls--actions">
+            <button class="pen-refresh">Refresh</button>
+            <button class="pen-codepen">Edit on CodePen</button>
+          </div>
+          <div class="pen-controls pen-controls--tabs">
+            <button class="pen-editJs">JS</button>
+            <button class="pen-editHtml">HTML</button>
+          </div>
+        </div>
+      </section>
+<section class="slide slide--code">
+        <div class="pen">
+          <div class="pen-jsContainer">
+            <textarea class="pen-js">function iotaArray(n) {
+  var result = new Array(n)
+  for(var i=0; i&lt;n; ++i) {
+    result[i] = i
+  }
+  return result
+}
+
+var ntraces = 10;
+var traces = [];
+var npts = 200;
+for (j = 0; j &lt; ntraces; j++) {
+  var x = [0];
+  var y = [0];
+  for (var i = 1; i &lt; npts; i++) {
+    x[i] = x[i - 1] + Math.random() - 0.5
+    y[i] = y[i - 1] + Math.random() - 0.5
+  }
+  traces.push({
+    x: x,
+    y: y,
+    showlegend: false,
+    opacity: 0.5,
+    line: {simplify: false},
+    mode: &apos;lines&apos;,
+    transforms: [{
+      type: &apos;filter&apos;,
+      target: iotaArray(npts),
+      operation: &apos;&lt;&apos;,
+      value: 1
+    }]
+  })
+}
+
+Plotly.plot(&apos;graph&apos;, traces, {
+  xaxis: {
+    scaleratio: 1,
+    scaleanchor: &apos;y&apos;,
+    range: [-6, 6]
+  },
+  yaxis: {
+    range: [-6, 6]
+  },
+  width: window.innerWidth - 30,
+  height: window.innerWidth - 30,
+  sliders: [{
+    steps: iotaArray(npts).map((i) =&gt; ({
+      label: i,
+      method: &apos;animate&apos;,
+      args: [[{
+        data: iotaArray(ntraces).map(() =&gt; ({
+          &apos;transforms[0].value&apos;: i
+        })),
+        traces: iotaArray(ntraces)
+      }], {
+        transition: {duration: 0},
+        frame: {duration: 0, redraw: false},
+        mode: &apos;immediate&apos;
+      }]
+    }))
+  }]
+}, {
+  scrollZoom: true
+});
 </textarea>
           </div>
           <div class="pen-htmlContainer">

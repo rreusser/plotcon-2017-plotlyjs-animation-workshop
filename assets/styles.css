@@ -38,6 +38,7 @@ body {
 
 .slide ul {
   display: inline-block;
+  text-align: left;
 }
 
 .slide.slide--code {

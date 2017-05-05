@@ -9048,6 +9048,31 @@ Plotly.plot(&apos;graph&apos;, traces, {
           </div>
         </div>
       </section>
+<section class="slide slide--code">
+        <div class="pen">
+          <div class="pen-jsContainer">
+            <textarea class="pen-js">var norm = require(&apos;random-normal&apos;);
+
+Plotly.plot(&apos;graph&apos;, [{
+  x: new Array(100).fill(0).map(norm),
+  y: new Array(100).fill(0).map(norm),
+  mode: &apos;markers&apos;,
+}]);
+</textarea>
+          </div>
+          <div class="pen-htmlContainer">
+            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;</textarea>
+          </div>
+          <div class="pen-controls pen-controls--actions">
+            <button class="pen-refresh">Refresh</button>
+            <button class="pen-codepen">Edit on CodePen</button>
+          </div>
+          <div class="pen-controls pen-controls--tabs">
+            <button class="pen-editJs">JS</button>
+            <button class="pen-editHtml">HTML</button>
+          </div>
+        </div>
+      </section>
 </div>
     <script src="assets/codemirror.js"></script>
     <script src="assets/javascript.js"></script>

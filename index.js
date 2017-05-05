@@ -99,8 +99,6 @@ ${htmlEditor.getValue()}
   var sandbox = Sandbox({
     container: outputDiv,
     cdn: 'http://wzrd.in',
-    iframeBody: htmlEditor.getValue(),
-    iframeHead: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
   });
 
   sandbox.on('modules', function (m) {
@@ -110,13 +108,16 @@ ${htmlEditor.getValue()}
     });
   });
 
-
   this.refresh = function () {
+    sandbox.iframeHead = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>';
     sandbox.iframeBody = htmlEditor.getValue();
     sandbox.bundle(jsEditor.getValue());
   };
 
-  this.refresh();
+  setTimeout(function () {
+    this.refresh();
+  }.bind(this), 100);
+
   this.editJs();
 
   this.destroy = function () {

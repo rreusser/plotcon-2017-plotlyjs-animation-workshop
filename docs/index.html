@@ -9004,6 +9004,44 @@ btn.addEventListener(&apos;click&apos;, function () {
     y: [1, 2, 3],
     line: {color: &apos;red&apos;}
   }],
+  layout: {
+    sliders: [{
+      steps: [{
+        label: &apos;Red&apos;,
+        method: &apos;restyle&apos;,
+        args: [&apos;line.color&apos;, &apos;red&apos;]
+      }, {
+        label: &apos;Green&apos;,
+        method: &apos;restyle&apos;,
+        args: [&apos;line.color&apos;, &apos;green&apos;]
+      }]
+    }]
+  }
+});
+</textarea>
+          </div>
+          <div class="pen-htmlContainer">
+            <textarea class="pen-html">&lt;div id=&quot;graph&quot;&gt;&lt;/div&gt;</textarea>
+          </div>
+          <div class="pen-controls pen-controls--actions">
+            <button class="pen-refresh">Refresh</button>
+            <button class="pen-codepen">Edit on CodePen</button>
+          </div>
+          <div class="pen-controls pen-controls--tabs">
+            <button class="pen-editJs">JS</button>
+            <button class="pen-editHtml">HTML</button>
+          </div>
+        </div>
+      </section>
+<section class="slide slide--code">
+        <div class="pen">
+          <div class="pen-jsContainer">
+            <textarea class="pen-js">Plotly.plot(&apos;graph&apos;, {
+  data: [{
+    x: [1, 2, 3],
+    y: [1, 2, 3],
+    line: {color: &apos;red&apos;}
+  }],
   frames: [{
     name: &apos;frame1&apos;,
     data: [{&apos;line.color&apos;: &apos;red&apos;}]

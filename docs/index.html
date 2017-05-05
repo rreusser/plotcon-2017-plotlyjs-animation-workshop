@@ -8960,6 +8960,7 @@ for (j = 0; j &lt; ntraces; j++) {
   })
 }
 
+var wh = Math.min(window.innerWidth - 20, window.innerHeight - 20);
 Plotly.plot(&apos;graph&apos;, traces, {
   xaxis: {
     scaleratio: 1,
@@ -8969,8 +8970,8 @@ Plotly.plot(&apos;graph&apos;, traces, {
   yaxis: {
     range: [-6, 6]
   },
-  width: window.innerWidth - 30,
-  height: window.innerWidth - 30,
+  width: wh,
+  height: wh,
   sliders: [{
     steps: iotaArray(npts).map((i) =&gt; ({
       label: i,
@@ -8990,6 +8991,7 @@ Plotly.plot(&apos;graph&apos;, traces, {
 }, {
   scrollZoom: true
 });
+
 </textarea>
           </div>
           <div class="pen-htmlContainer">

@@ -32,6 +32,7 @@ for (j = 0; j < ntraces; j++) {
   })
 }
 
+var wh = Math.min(window.innerWidth - 20, window.innerHeight - 20);
 Plotly.plot('graph', traces, {
   xaxis: {
     scaleratio: 1,
@@ -41,8 +42,8 @@ Plotly.plot('graph', traces, {
   yaxis: {
     range: [-6, 6]
   },
-  width: window.innerWidth - 30,
-  height: window.innerWidth - 30,
+  width: wh,
+  height: wh,
   sliders: [{
     steps: iotaArray(npts).map((i) => ({
       label: i,
@@ -62,3 +63,4 @@ Plotly.plot('graph', traces, {
 }, {
   scrollZoom: true
 });
+

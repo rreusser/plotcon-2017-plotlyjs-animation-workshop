@@ -1,5 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Sandbox = require('browser-module-sandbox');
+var camelcase = require('camelcase');
 
 function Pen (root, slideNumber) {
   var jsTextarea = root.querySelector('.pen-js');
@@ -70,7 +71,14 @@ function Pen (root, slideNumber) {
       editors: "001",
       title: 'Plotly.js Master Class - Slide #' + slideNumber,
       description: 'Plotly.js Master Class - Slide #' + slideNumber,
-      html: htmlEditor.getValue(),
+      html: `<head>
+<script src="https://s3.amazonaws.com/assets.rickyreusser.com/fakerequire.js"></script>
+${(requires && requires.length > 0) ? requires.map(m => '<script src="' + 'https://wzrd.in/standalone/' + m + '"></script>\n') : ''}
+</head>
+<body>
+${htmlEditor.getValue()}
+</body>
+`,
       js: jsEditor.getValue()
     }));
 
@@ -88,11 +96,19 @@ function Pen (root, slideNumber) {
     document.body.removeChild(form);
   };
 
+  var modules, requires;
   var sandbox = Sandbox({
     container: outputDiv,
     cdn: 'http://wzrd.in',
     iframeBody: htmlEditor.getValue(),
     iframeHead: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
+  });
+
+  sandbox.on('modules', function (m) {
+    requires = m.slice().map(function (mod) { return mod.name });
+    modules = m.slice().map(function (mod) {
+      return camelcase(mod.name)
+    });
   });
 
 
@@ -215,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
   slideshow.initialize();
 });
 
-},{"browser-module-sandbox":9}],2:[function(require,module,exports){
+},{"browser-module-sandbox":9,"camelcase":13}],2:[function(require,module,exports){
 (function (process){
 /* Copyright (c) 2013 Rod Vagg, MIT License */
 
@@ -286,7 +302,7 @@ AbstractChainedBatch.prototype.write = function (options, callback) {
 
 module.exports = AbstractChainedBatch
 }).call(this,require('_process'))
-},{"_process":24}],3:[function(require,module,exports){
+},{"_process":25}],3:[function(require,module,exports){
 (function (process){
 /* Copyright (c) 2013 Rod Vagg, MIT License */
 
@@ -339,7 +355,7 @@ AbstractIterator.prototype.end = function (callback) {
 module.exports = AbstractIterator
 
 }).call(this,require('_process'))
-},{"_process":24}],4:[function(require,module,exports){
+},{"_process":25}],4:[function(require,module,exports){
 (function (Buffer,process){
 /* Copyright (c) 2013 Rod Vagg, MIT License */
 
@@ -525,7 +541,7 @@ module.exports.AbstractLevelDOWN = AbstractLevelDOWN
 module.exports.AbstractIterator  = AbstractIterator
 
 }).call(this,{"isBuffer":require("../is-buffer/index.js")},require('_process'))
-},{"../is-buffer/index.js":19,"./abstract-chained-batch":2,"./abstract-iterator":3,"_process":24}],5:[function(require,module,exports){
+},{"../is-buffer/index.js":20,"./abstract-chained-batch":2,"./abstract-iterator":3,"_process":25}],5:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -4541,7 +4557,7 @@ Cache.prototype._all = function(cb) {
   }
 }
 
-},{"level-js":21,"memdown":23}],9:[function(require,module,exports){
+},{"level-js":22,"memdown":24}],9:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits')
@@ -4710,7 +4726,7 @@ Sandbox.prototype.bundle = function(entry, preferredVersions) {
   }
 }
 
-},{"browser-module-cache":8,"browser-request":11,"detective":14,"events":15,"iframe":10,"inherits":18}],10:[function(require,module,exports){
+},{"browser-module-cache":8,"browser-request":11,"detective":15,"events":16,"iframe":10,"inherits":19}],10:[function(require,module,exports){
 module.exports = function(opts) {
   return new IFrame(opts)
 }
@@ -6976,14 +6992,80 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":7,"ieee754":17}],13:[function(require,module,exports){
+},{"base64-js":7,"ieee754":18}],13:[function(require,module,exports){
+'use strict';
+
+function preserveCamelCase(str) {
+	let isLastCharLower = false;
+	let isLastCharUpper = false;
+	let isLastLastCharUpper = false;
+
+	for (let i = 0; i < str.length; i++) {
+		const c = str[i];
+
+		if (isLastCharLower && /[a-zA-Z]/.test(c) && c.toUpperCase() === c) {
+			str = str.substr(0, i) + '-' + str.substr(i);
+			isLastCharLower = false;
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = true;
+			i++;
+		} else if (isLastCharUpper && isLastLastCharUpper && /[a-zA-Z]/.test(c) && c.toLowerCase() === c) {
+			str = str.substr(0, i - 1) + '-' + str.substr(i - 1);
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = false;
+			isLastCharLower = true;
+		} else {
+			isLastCharLower = c.toLowerCase() === c;
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = c.toUpperCase() === c;
+		}
+	}
+
+	return str;
+}
+
+module.exports = function (str) {
+	if (arguments.length > 1) {
+		str = Array.from(arguments)
+			.map(x => x.trim())
+			.filter(x => x.length)
+			.join('-');
+	} else {
+		str = str.trim();
+	}
+
+	if (str.length === 0) {
+		return '';
+	}
+
+	if (str.length === 1) {
+		return str.toLowerCase();
+	}
+
+	if (/^[a-z0-9]+$/.test(str)) {
+		return str;
+	}
+
+	const hasUpperCase = str !== str.toLowerCase();
+
+	if (hasUpperCase) {
+		str = preserveCamelCase(str);
+	}
+
+	return str
+		.replace(/^[_.\- ]+/, '')
+		.toLowerCase()
+		.replace(/[_.\- ]+(\w|$)/g, (m, p1) => p1.toUpperCase());
+};
+
+},{}],14:[function(require,module,exports){
 module.exports = function () {
     for (var i = 0; i < arguments.length; i++) {
         if (arguments[i] !== undefined) return arguments[i];
     }
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var acorn = require('acorn');
 var walk = require('acorn/dist/walk');
 var defined = require('defined');
@@ -7056,7 +7138,7 @@ exports.find = function (src, opts) {
     return modules;
 };
 
-},{"acorn":5,"acorn/dist/walk":6,"defined":13}],15:[function(require,module,exports){
+},{"acorn":5,"acorn/dist/walk":6,"defined":14}],16:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7360,7 +7442,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*jshint expr:true */
 /*global window:false, console:false, define:false, module:false */
 
@@ -8349,7 +8431,7 @@ function isUndefined(arg) {
 
 }, this);
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -8435,7 +8517,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -8460,7 +8542,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -8483,7 +8565,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 
 module.exports = isBuffer;
@@ -8493,7 +8575,7 @@ function isBuffer (o) {
     || /\[object (.+Array|Array.+)\]/.test(Object.prototype.toString.call(o));
 }
 
-},{"buffer":12}],21:[function(require,module,exports){
+},{"buffer":12}],22:[function(require,module,exports){
 module.exports = Level
 
 var IDB = require('idb-wrapper')
@@ -8604,7 +8686,7 @@ function StringToArrayBuffer(str) {
   return buf
 }
 
-},{"./iterator":22,"abstract-leveldown":4,"idb-wrapper":16,"isbuffer":20,"util":27}],22:[function(require,module,exports){
+},{"./iterator":23,"abstract-leveldown":4,"idb-wrapper":17,"isbuffer":21,"util":28}],23:[function(require,module,exports){
 var util = require('util')
 var AbstractIterator  = require('abstract-leveldown').AbstractIterator
 module.exports = Iterator
@@ -8690,7 +8772,7 @@ Iterator.prototype._next = function (callback) {
   }
   this.callback = callback
 }
-},{"abstract-leveldown":4,"util":27}],23:[function(require,module,exports){
+},{"abstract-leveldown":4,"util":28}],24:[function(require,module,exports){
 (function (process,global,Buffer){
 var util              = require('util')
   , AbstractLevelDOWN = require('abstract-leveldown').AbstractLevelDOWN
@@ -8827,7 +8909,7 @@ MemDOWN.prototype._iterator = function (options) {
 module.exports = MemDOWN
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"_process":24,"abstract-leveldown":4,"buffer":12,"util":27}],24:[function(require,module,exports){
+},{"_process":25,"abstract-leveldown":4,"buffer":12,"util":28}],25:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -9013,16 +9095,16 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],25:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],26:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"dup":19}],27:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9612,4 +9694,4 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":26,"_process":24,"inherits":25}]},{},[1]);
+},{"./support/isBuffer":27,"_process":25,"inherits":26}]},{},[1]);

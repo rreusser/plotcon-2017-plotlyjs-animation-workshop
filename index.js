@@ -1,4 +1,5 @@
 var Sandbox = require('browser-module-sandbox');
+var camelcase = require('camelcase');
 
 function Pen (root, slideNumber) {
   var jsTextarea = root.querySelector('.pen-js');
@@ -69,7 +70,14 @@ function Pen (root, slideNumber) {
       editors: "001",
       title: 'Plotly.js Master Class - Slide #' + slideNumber,
       description: 'Plotly.js Master Class - Slide #' + slideNumber,
-      html: htmlEditor.getValue(),
+      html: `<head>
+<script src="https://s3.amazonaws.com/assets.rickyreusser.com/fakerequire.js"></script>
+${(requires && requires.length > 0) ? requires.map(m => '<script src="' + 'https://wzrd.in/standalone/' + m + '"></script>\n') : ''}
+</head>
+<body>
+${htmlEditor.getValue()}
+</body>
+`,
       js: jsEditor.getValue()
     }));
 
@@ -87,11 +95,19 @@ function Pen (root, slideNumber) {
     document.body.removeChild(form);
   };
 
+  var modules, requires;
   var sandbox = Sandbox({
     container: outputDiv,
     cdn: 'http://wzrd.in',
     iframeBody: htmlEditor.getValue(),
     iframeHead: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
+  });
+
+  sandbox.on('modules', function (m) {
+    requires = m.slice().map(function (mod) { return mod.name });
+    modules = m.slice().map(function (mod) {
+      return camelcase(mod.name)
+    });
   });
 
 

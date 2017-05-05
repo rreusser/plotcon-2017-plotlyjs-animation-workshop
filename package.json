@@ -18,6 +18,7 @@
     "browser-module-sandbox": "^1.4.5",
     "browserify": "^14.3.0",
     "budo": "^10.0.3",
+    "camelcase": "^4.1.0",
     "codemirror": "^5.25.2",
     "es2040": "^1.2.5",
     "html-entities": "^1.2.1",

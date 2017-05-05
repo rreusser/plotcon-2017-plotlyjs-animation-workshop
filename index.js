@@ -1,4 +1,4 @@
-var iframe = require('iframe');
+var Sandbox = require('browser-module-sandbox');
 
 function Pen (root, slideNumber) {
   var jsTextarea = root.querySelector('.pen-js');
@@ -31,8 +31,6 @@ function Pen (root, slideNumber) {
   var outputDiv = document.createElement('div');
   outputDiv.classList.add('pen-output');
   root.appendChild(outputDiv);
-
-  var frame = iframe({container: outputDiv});
 
   var jsBtn = root.querySelector('.pen-editJs');
   var htmlBtn = root.querySelector('.pen-editHtml');
@@ -89,14 +87,17 @@ function Pen (root, slideNumber) {
     document.body.removeChild(form);
   };
 
+  var sandbox = Sandbox({
+    container: outputDiv,
+    cdn: 'http://wzrd.in',
+    iframeBody: htmlEditor.getValue(),
+    iframeHead: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
+  });
+
+
   this.refresh = function () {
-    frame.setHTML({
-      head: '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>',
-      body: `
-        ${htmlEditor.getValue()}
-        <script type="text/javascript">${jsEditor.getValue()}</script>
-      `
-    });
+    sandbox.iframeBody = htmlEditor.getValue();
+    sandbox.bundle(jsEditor.getValue());
   };
 
   this.refresh();

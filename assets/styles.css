@@ -107,7 +107,7 @@ body {
 
 .pen-output {
   position: absolute;
-  top: 40px;
+  top: 41px;
   right: 0;
   bottom: 0;
   left: 50%;
@@ -117,7 +117,7 @@ body {
 .pen .CodeMirror {
   position: absolute;
   width: 50%;
-  top: 40px;
+  top: 41px;
   bottom:0;
   left: 0;
   height: auto;

@@ -1,7 +1,9 @@
 var norm = require('random-normal');
+var iota = require('iota-array');
 
 Plotly.plot('graph', [{
-  x: new Array(100).fill(0).map(norm),
-  y: new Array(100).fill(0).map(norm),
+  x: iota(100).map(norm),
+  y: iota(100).map(norm),
   mode: 'markers',
 }]);
+

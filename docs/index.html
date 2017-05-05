@@ -9052,12 +9052,14 @@ Plotly.plot(&apos;graph&apos;, traces, {
         <div class="pen">
           <div class="pen-jsContainer">
             <textarea class="pen-js">var norm = require(&apos;random-normal&apos;);
+var iota = require(&apos;iota-array&apos;);
 
 Plotly.plot(&apos;graph&apos;, [{
-  x: new Array(100).fill(0).map(norm),
-  y: new Array(100).fill(0).map(norm),
+  x: iota(100).map(norm),
+  y: iota(100).map(norm),
   mode: &apos;markers&apos;,
 }]);
+
 </textarea>
           </div>
           <div class="pen-htmlContainer">
